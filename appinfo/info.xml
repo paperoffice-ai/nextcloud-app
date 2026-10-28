@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+    <id>paperoffice_ai</id>
+    <name>PaperOffice AI</name>
+    <summary>Send documents from Nextcloud to PaperOffice AI for OCR, search and AI document processing</summary>
+    <description><![CDATA[Connect your Nextcloud files with [PaperOffice AI](https://paperoffice.ai).
+
+- **Inbox folder:** every user can pick a folder in their own files (default `PaperOffice-Inbox`; shares and external storage are skipped). New files in it are uploaded to a PaperOffice AI workspace and then moved to `_uploaded` inside that folder.
+- **Send to PaperOffice AI:** a file action in the Files app sends a single file right away.
+- **Your own key:** each user connects with their own PaperOffice AI API key (User token `po_ut_…`; Group tokens `po_gt_…` and Secret keys `po_sk_…` also work). The key is stored encrypted and never shown again.
+
+Document processing (OCR, extraction, classification) runs on PaperOffice's own hardware in its own data center in Navarra, Spain (EU), without external AI providers.
+
+A PaperOffice AI account and API key are required. No specific plan is required. Usage is billed to your PaperOffice AI account as usual. Optional AI analysis on upload is off by default.
+
+**Limitations:** files are copied to PaperOffice AI. Results (extracted fields, searchable PDFs) are not written back to Nextcloud in this version. Files are never deleted in Nextcloud; processed inbox files are moved to `_uploaded`.]]></description>
+    <version>1.0.3</version>
+    <licence>MIT</licence>
+    <author mail="vendor.nextcloud@paperoffice.ai" homepage="https://paperoffice.ai">PaperOffice Enterprise Operations, S.L.U.</author>
+    <namespace>PaperOfficeAI</namespace>
+    <category>files</category>
+    <category>integration</category>
+    <category>ai</category>
+    <website>https://paperoffice.ai/en/ai-nas-integration-sftp-webdav-byos/</website>
+    <bugs>https://paperoffice.ai/en/contact/</bugs>
+    <dependencies>
+        <php min-version="8.1"/>
+        <nextcloud min-version="31" max-version="35"/>
+    </dependencies>
+    <background-jobs>
+        <job>OCA\PaperOfficeAI\BackgroundJob\InboxJob</job>
+    </background-jobs>
+    <settings>
+        <personal>OCA\PaperOfficeAI\Settings\Personal</personal>
+        <personal-section>OCA\PaperOfficeAI\Settings\PersonalSection</personal-section>
+    </settings>
+</info>
