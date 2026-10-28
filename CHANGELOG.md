@@ -2,6 +2,19 @@
 
 All notable changes to this app are documented in this file.
 
+## 1.0.5 – 2026-10-28
+
+### Changed
+- Users outside the allowed groups can still remove their stored key.
+- Stored keys of users who leave the allowed groups (or whose group is deleted) are removed automatically.
+
+## 1.0.4 – 2026-10-28
+
+### Changed
+- Store listing: source repository, issue tracker and screenshots.
+- Admin setting: only these groups may connect PaperOffice AI (default: all users).
+- A gateway error (HTTP 502/504) during an upload is not retried automatically; the file goes to `_failed` with a note.
+
 ## 1.0.3 – 2026-10-28
 
 ### Changed

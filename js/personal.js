@@ -47,6 +47,18 @@
 		if (!$('paperoffice-ai-settings')) {
 			return
 		}
+		// Without the group right only the stored key can be removed.
+		if ($('poai-clear-only')) {
+			$('poai-clear-only').addEventListener('click', function () {
+				request('POST', '/settings', { clearKey: true }).then(function (res) {
+					status(res.ok ? t('paperoffice_ai', 'Key removed.') : (res.data.message || t('paperoffice_ai', 'Could not save.')), res.ok)
+					if (res.ok) {
+						$('poai-clear-only').disabled = true
+					}
+				})
+			})
+			return
+		}
 		$('poai-save').addEventListener('click', function () { save(false) })
 		$('poai-clear').addEventListener('click', function () { save(true) })
 		$('poai-test').addEventListener('click', function () {

@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace OCA\PaperOfficeAI\Service;
 
 use OCA\PaperOfficeAI\AppInfo\Application;
+use OCP\IAppConfig;
 use OCP\IConfig;
+use OCP\IGroupManager;
+use OCP\IUserManager;
 use OCP\Security\ICrypto;
 
 /**
@@ -22,7 +25,39 @@ class SettingsService {
 	public function __construct(
 		private IConfig $config,
 		private ICrypto $crypto,
+		private IAppConfig $appConfig,
+		private IGroupManager $groupManager,
+		private IUserManager $userManager,
 	) {
+	}
+
+	/** @return string[] group IDs allowed to connect PaperOffice AI; empty = all users */
+	public function getAllowedGroups(): array {
+		$groups = json_decode($this->appConfig->getValueString(Application::APP_ID, 'allowed_groups', '[]'), true);
+		return is_array($groups) ? array_values(array_filter($groups, 'is_string')) : [];
+	}
+
+	/** @param string[] $groups */
+	public function setAllowedGroups(array $groups): void {
+		$this->appConfig->setValueString(Application::APP_ID, 'allowed_groups', json_encode(array_values($groups)));
+	}
+
+	/** Whether this user may use PaperOffice AI (admin setting "only these groups"). */
+	public function isAllowed(string $uid): bool {
+		$groups = $this->getAllowedGroups();
+		if ($groups === []) {
+			return true;
+		}
+		$user = $this->userManager->get($uid);
+		if ($user === null) {
+			return false;
+		}
+		foreach ($groups as $gid) {
+			if ($this->groupManager->isInGroup($uid, $gid)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public function hasToken(string $uid): bool {
@@ -44,6 +79,11 @@ class SettingsService {
 
 	public function setToken(string $uid, string $token): void {
 		$this->set($uid, 'token', $token === '' ? '' : $this->crypto->encrypt($token));
+		if ($token === '') {
+			$this->config->deleteUserValue($uid, Application::APP_ID, 'connected');
+		} else {
+			$this->set($uid, 'connected', '1');
+		}
 		$this->config->deleteUserValue($uid, Application::APP_ID, 'workspace_checked');
 	}
 
@@ -77,6 +117,31 @@ class SettingsService {
 		$this->set($uid, 'inbox_enabled', $inboxEnabled ? '1' : '0');
 		$this->set($uid, 'tier', $tier);
 		$this->config->deleteUserValue($uid, Application::APP_ID, 'workspace_checked');
+	}
+
+	/**
+	 * Removes the stored key of every user who is no longer allowed (admin
+	 * setting "only these groups"). Returns the number of removed keys.
+	 */
+	public function revokeDisallowed(): int {
+		$users = array_unique(array_merge(
+			$this->config->getUsersForUserValue(Application::APP_ID, 'connected', '1'),
+			$this->getInboxUsers(),
+		));
+		$count = 0;
+		foreach ($users as $uid) {
+			$uid = (string)$uid;
+			if ($this->hasToken($uid) && !$this->isAllowed($uid)) {
+				$this->setToken($uid, '');
+				$this->disableInbox($uid);
+				$count++;
+			}
+		}
+		return $count;
+	}
+
+	public function disableInbox(string $uid): void {
+		$this->set($uid, 'inbox_enabled', '0');
 	}
 
 	/**

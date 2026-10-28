@@ -50,7 +50,14 @@
   "Too many attempts. Try again in a minute.": "Zu viele Versuche. Bitte versuchen Sie es in einer Minute erneut.",
   "The owner of this share does not allow downloads, so the file cannot be sent.": "Die Eigentümerin bzw. der Eigentümer dieser Freigabe erlaubt keine Downloads, daher kann die Datei nicht gesendet werden.",
   "No specific plan is required. Usage is billed to your PaperOffice AI account as usual.": "Ein bestimmter Tarif ist nicht nötig. Die Nutzung wird wie gewohnt über Ihr PaperOffice-AI-Konto abgerechnet.",
-  "This shared file cannot be checked, so it is not sent.": "Diese freigegebene Datei kann nicht geprüft werden und wird daher nicht gesendet."
+  "This shared file cannot be checked, so it is not sent.": "Diese freigegebene Datei kann nicht geprüft werden und wird daher nicht gesendet.",
+  "Your administrator has not enabled PaperOffice AI for your account.": "Ihre Administration hat PaperOffice AI für Ihr Konto nicht freigegeben.",
+  "PaperOffice AI did not confirm the upload (HTTP %s). The file may already have been uploaded. Check your workspace; to upload again, move the file back into the inbox folder.": "PaperOffice AI hat das Hochladen nicht bestätigt (HTTP %s). Die Datei wurde möglicherweise schon hochgeladen. Prüfen Sie Ihren Workspace; um sie erneut hochzuladen, verschieben Sie die Datei zurück in den Eingangsordner.",
+  "Group %s does not exist.": "Die Gruppe %s existiert nicht.",
+  "Only these groups may connect PaperOffice AI": "Nur diese Gruppen dürfen PaperOffice AI verbinden",
+  "All users": "Alle Nutzer",
+  "Key removed.": "Schlüssel entfernt.",
+  "Comma-separated group IDs. Leave empty to allow all users. Each user connects with their own PaperOffice AI key. Stored keys of users outside these groups are removed, also when a user leaves a group later.": "Gruppen-IDs, durch Kommas getrennt. Leer lassen, um alle Nutzer zuzulassen. Jeder Nutzer verbindet sich mit seinem eigenen PaperOffice-AI-Schlüssel. Gespeicherte Schlüssel von Nutzern außerhalb dieser Gruppen werden entfernt, auch wenn ein Nutzer eine Gruppe später verlässt."
  },
  "pluralForm": "nplurals=2; plural=(n != 1);"
 }

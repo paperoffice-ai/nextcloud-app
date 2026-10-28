@@ -5,6 +5,16 @@ $s = $_['settings'];
 ?>
 <div id="paperoffice-ai-settings" class="section">
 	<h2>PaperOffice AI</h2>
+	<?php if (!$_['allowed']) { ?>
+	<p><?php p($l->t('Your administrator has not enabled PaperOffice AI for your account.')); ?></p>
+	<?php if ($s['hasToken']) { ?>
+	<p>
+		<button id="poai-clear-only"><?php p($l->t('Remove key')); ?></button>
+		<span id="poai-status" role="status"></span>
+	</p>
+	<?php } ?>
+</div>
+	<?php return; } ?>
 	<p class="settings-hint"><?php p($l->t('Send documents from Nextcloud to PaperOffice AI. Document processing (OCR, extraction, classification) runs on PaperOffice\'s own hardware in its own data center in Navarra, Spain (EU), without external AI providers.')); ?></p>
 
 	<p>

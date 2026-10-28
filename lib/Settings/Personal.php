@@ -21,7 +21,10 @@ class Personal implements ISettings {
 	public function getForm(): TemplateResponse {
 		$uid = (string)$this->userSession->getUser()?->getUID();
 		Util::addScript(Application::APP_ID, 'personal');
-		return new TemplateResponse(Application::APP_ID, 'personal', ['settings' => $this->settings->getPublic($uid)]);
+		return new TemplateResponse(Application::APP_ID, 'personal', [
+			'settings' => $this->settings->getPublic($uid),
+			'allowed' => $this->settings->isAllowed($uid),
+		]);
 	}
 
 	public function getSection(): string {

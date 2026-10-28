@@ -25,7 +25,7 @@ class LoadFilesScripts implements IEventListener {
 			return;
 		}
 		$user = $this->userSession->getUser();
-		if ($user === null || !$this->settings->hasToken($user->getUID())) {
+		if ($user === null || !$this->settings->hasToken($user->getUID()) || !$this->settings->isAllowed($user->getUID())) {
 			return;
 		}
 		Util::addScript(Application::APP_ID, 'fileaction');

@@ -121,7 +121,7 @@ class ApiClient {
 			}
 			return ['status' => self::TEMPORARY, 'message' => $this->l->t('No connection to api.paperoffice.ai.'), 'data' => [], 'http' => 0];
 		}
-		return $this->result($response);
+		return $this->result($response, $isWrite);
 	}
 
 	/**
@@ -138,7 +138,7 @@ class ApiClient {
 		return $errno === 28 && str_contains($e->getMessage(), 'Connection timed out');
 	}
 
-	private function result(IResponse $response): array {
+	private function result(IResponse $response, bool $isWrite = false): array {
 		$code = $response->getStatusCode();
 		$data = json_decode((string)$response->getBody(), true);
 		$data = is_array($data) ? $data : [];
@@ -152,6 +152,10 @@ class ApiClient {
 		}
 		if ($code === 401 || $code === 403) {
 			return ['status' => self::AUTH, 'message' => $this->l->t('The key was rejected (HTTP %s).', [(string)$code]) . ' ' . $this->keyHelp(), 'data' => $data, 'http' => $code];
+		}
+		if ($isWrite && ($code === 502 || $code === 504)) {
+			// A gateway error can come after PaperOffice AI already accepted the upload.
+			return ['status' => self::UNCLEAR, 'message' => $this->l->t('PaperOffice AI did not confirm the upload (HTTP %s). The file may already have been uploaded. Check your workspace; to upload again, move the file back into the inbox folder.', [(string)$code]), 'data' => $data, 'http' => $code];
 		}
 		if ($code === 408 || $code === 429 || $code >= 500) {
 			return ['status' => self::TEMPORARY, 'message' => $this->l->t('PaperOffice AI is busy (HTTP %s). It will be retried.', [(string)$code]), 'data' => $data, 'http' => $code];

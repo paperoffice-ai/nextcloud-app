@@ -35,9 +35,25 @@ class SettingsController extends Controller {
 	}
 
 	/** An empty token keeps the stored key; clearKey removes it. */
+	private function notAllowed(): ?JSONResponse {
+		if ($this->settings->isAllowed((string)$this->userId)) {
+			return null;
+		}
+		return new JSONResponse(['ok' => false, 'message' => $this->l->t('Your administrator has not enabled PaperOffice AI for your account.')], Http::STATUS_FORBIDDEN);
+	}
+
 	#[NoAdminRequired]
 	public function save(string $token = '', bool $clearKey = false, string $workspace = '', string $inbox = '', bool $inboxEnabled = false, string $tier = ''): JSONResponse {
 		$uid = (string)$this->userId;
+		if ($clearKey) {
+			// Removing the own key is always possible, also without the group right.
+			$this->settings->setToken($uid, '');
+			$this->settings->disableInbox($uid);
+			return new JSONResponse($this->settings->getPublic($uid));
+		}
+		if ($denied = $this->notAllowed()) {
+			return $denied;
+		}
 		$token = trim($token);
 		$workspace = trim($workspace);
 		$inbox = trim(str_replace('\\', '/', $inbox), '/ ');
@@ -57,10 +73,7 @@ class SettingsController extends Controller {
 		if (!in_array($tier, SettingsService::TIERS, true)) {
 			$tier = '';
 		}
-		if ($clearKey) {
-			$this->settings->setToken($uid, '');
-			$inboxEnabled = false;
-		} elseif ($token !== '') {
+		if ($token !== '') {
 			$this->settings->setToken($uid, $token);
 		}
 		$this->settings->setValues($uid, $workspace, $inbox, $inboxEnabled && $this->settings->hasToken($uid), $tier);
@@ -71,6 +84,9 @@ class SettingsController extends Controller {
 	#[NoAdminRequired]
 	#[UserRateLimit(limit: 10, period: 60)]
 	public function test(): JSONResponse {
+		if ($denied = $this->notAllowed()) {
+			return $denied;
+		}
 		$uid = (string)$this->userId;
 		try {
 			$token = $this->settings->getToken($uid);

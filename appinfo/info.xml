@@ -15,7 +15,7 @@ Document processing (OCR, extraction, classification) runs on PaperOffice's own 
 A PaperOffice AI account and API key are required. No specific plan is required. Usage is billed to your PaperOffice AI account as usual. Optional AI analysis on upload is off by default.
 
 **Limitations:** files are copied to PaperOffice AI. Results (extracted fields, searchable PDFs) are not written back to Nextcloud in this version. Files are never deleted in Nextcloud; processed inbox files are moved to `_uploaded`.]]></description>
-    <version>1.0.3</version>
+    <version>1.0.5</version>
     <licence>MIT</licence>
     <author mail="vendor.nextcloud@paperoffice.ai" homepage="https://paperoffice.ai">PaperOffice Enterprise Operations, S.L.U.</author>
     <namespace>PaperOfficeAI</namespace>
@@ -23,7 +23,10 @@ A PaperOffice AI account and API key are required. No specific plan is required.
     <category>integration</category>
     <category>ai</category>
     <website>https://paperoffice.ai/en/ai-nas-integration-sftp-webdav-byos/</website>
-    <bugs>https://paperoffice.ai/en/contact/</bugs>
+    <bugs>https://github.com/paperoffice-ai/nextcloud-app/issues</bugs>
+    <repository type="git">https://github.com/paperoffice-ai/nextcloud-app.git</repository>
+    <screenshot>https://raw.githubusercontent.com/paperoffice-ai/nextcloud-app/main/screenshots/settings.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/paperoffice-ai/nextcloud-app/main/screenshots/file-action.png</screenshot>
     <dependencies>
         <php min-version="8.1"/>
         <nextcloud min-version="31" max-version="35"/>
@@ -32,6 +35,8 @@ A PaperOffice AI account and API key are required. No specific plan is required.
         <job>OCA\PaperOfficeAI\BackgroundJob\InboxJob</job>
     </background-jobs>
     <settings>
+        <admin>OCA\PaperOfficeAI\Settings\Admin</admin>
+        <admin-section>OCA\PaperOfficeAI\Settings\AdminSection</admin-section>
         <personal>OCA\PaperOfficeAI\Settings\Personal</personal>
         <personal-section>OCA\PaperOfficeAI\Settings\PersonalSection</personal-section>
     </settings>

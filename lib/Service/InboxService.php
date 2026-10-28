@@ -78,6 +78,9 @@ class InboxService {
 	}
 
 	public function processUser(string $uid): void {
+		if (!$this->settings->isAllowed($uid)) {
+			return;
+		}
 		try {
 			$token = $this->settings->getToken($uid);
 		} catch (KeyUnreadableException $e) {
@@ -117,6 +120,9 @@ class InboxService {
 
 	/** Uploads one file without moving it (file action). */
 	public function sendFile(string $uid, int $fileId): array {
+		if (!$this->settings->isAllowed($uid)) {
+			return ['status' => ApiClient::AUTH, 'message' => $this->l->t('Your administrator has not enabled PaperOffice AI for your account.')];
+		}
 		try {
 			$token = $this->settings->getToken($uid);
 		} catch (KeyUnreadableException $e) {
